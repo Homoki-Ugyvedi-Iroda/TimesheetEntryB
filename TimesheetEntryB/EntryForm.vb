@@ -14,8 +14,8 @@
         Else
             MsgBox("Nem érhető el a Sharepoint szerver, offline.")
         End If
-
         ' Add any initialization after the InitializeComponent() call.
 
     End Sub
+
 End Class
