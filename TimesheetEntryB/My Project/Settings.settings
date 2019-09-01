@@ -5,5 +5,8 @@
     <Setting Name="SpUrl" Type="System.String" Scope="User">
       <Value Profile="(Default)">https://homoki.sharepoint.com</Value>
     </Setting>
+    <Setting Name="EmailCurrentUser" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>
