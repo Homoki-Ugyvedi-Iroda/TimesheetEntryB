@@ -22,6 +22,7 @@ Partial Class EntryForm
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Me.Message = New System.Windows.Forms.Label()
         Me.cbMatterPicker = New System.Windows.Forms.ComboBox()
         Me.Record = New System.Windows.Forms.Button()
@@ -36,6 +37,9 @@ Partial Class EntryForm
         Me.Label2 = New System.Windows.Forms.Label()
         Me.tbDescription = New System.Windows.Forms.TextBox()
         Me.Label3 = New System.Windows.Forms.Label()
+        Me.TimerForRefresh = New System.Windows.Forms.Timer(Me.components)
+        Me.btnClear = New System.Windows.Forms.Button()
+        Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         CType(Me.Chargeable, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.RealValue, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -58,6 +62,7 @@ Partial Class EntryForm
         Me.cbMatterPicker.Name = "cbMatterPicker"
         Me.cbMatterPicker.Size = New System.Drawing.Size(105, 21)
         Me.cbMatterPicker.TabIndex = 0
+        Me.ToolTip1.SetToolTip(Me.cbMatterPicker, "ügy, amihez rögzítünk teljesítést")
         '
         'Record
         '
@@ -77,6 +82,7 @@ Partial Class EntryForm
         Me.cbRecorder.Name = "cbRecorder"
         Me.cbRecorder.Size = New System.Drawing.Size(93, 21)
         Me.cbRecorder.TabIndex = 10
+        Me.ToolTip1.SetToolTip(Me.cbRecorder, "teljesítést végző személy neve")
         '
         'DateCompleted
         '
@@ -98,6 +104,8 @@ Partial Class EntryForm
         Me.cbPersons.Name = "cbPersons"
         Me.cbPersons.Size = New System.Drawing.Size(234, 21)
         Me.cbPersons.TabIndex = 3
+        Me.ToolTip1.SetToolTip(Me.cbPersons, "itt nevesíthetjük a tevékenységhez kapcsolódó, de az ügyből nem egyértelmű személ" &
+        "yeket (pl. az ügyfél üzletfeleit, más személyeket).")
         '
         'tbReviewer
         '
@@ -120,6 +128,9 @@ Partial Class EntryForm
         Me.Chargeable.Name = "Chargeable"
         Me.Chargeable.Size = New System.Drawing.Size(44, 20)
         Me.Chargeable.TabIndex = 6
+        Me.ToolTip1.SetToolTip(Me.Chargeable, "A teljesítés felszámítható mennyisége időben (decimális percben)." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Csak dupla kat" &
+        "tintás után rögzíthető, egyébként a valós idővel megegyező idő lesz számlázhatók" &
+        "ént rögzítve.")
         '
         'RealValue
         '
@@ -130,6 +141,7 @@ Partial Class EntryForm
         Me.RealValue.Name = "RealValue"
         Me.RealValue.Size = New System.Drawing.Size(42, 20)
         Me.RealValue.TabIndex = 5
+        Me.ToolTip1.SetToolTip(Me.RealValue, "teljesítés valós mennyisége időben (decimális percben)")
         Me.RealValue.Value = New Decimal(New Integer() {25, 0, 0, 131072})
         '
         'cbTaskChooser
@@ -142,6 +154,7 @@ Partial Class EntryForm
         Me.cbTaskChooser.Name = "cbTaskChooser"
         Me.cbTaskChooser.Size = New System.Drawing.Size(165, 21)
         Me.cbTaskChooser.TabIndex = 2
+        Me.ToolTip1.SetToolTip(Me.cbTaskChooser, "ha egy feladathoz kapcsolódik a tevékenység, itt adhatjuk meg a feladatot")
         '
         'Label1
         '
@@ -171,6 +184,7 @@ Partial Class EntryForm
         Me.tbDescription.Name = "tbDescription"
         Me.tbDescription.Size = New System.Drawing.Size(356, 20)
         Me.tbDescription.TabIndex = 4
+        Me.ToolTip1.SetToolTip(Me.tbDescription, "tevékenység leírása")
         '
         'Label3
         '
@@ -182,11 +196,28 @@ Partial Class EntryForm
         Me.Label3.TabIndex = 13
         Me.Label3.Text = "Ügyfélpartner, más személy"
         '
+        'TimerForRefresh
+        '
+        Me.TimerForRefresh.Interval = 600000
+        '
+        'btnClear
+        '
+        Me.btnClear.Font = New System.Drawing.Font("Microsoft Sans Serif", 6.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
+        Me.btnClear.Location = New System.Drawing.Point(1352, 23)
+        Me.btnClear.Margin = New System.Windows.Forms.Padding(1)
+        Me.btnClear.Name = "btnClear"
+        Me.btnClear.Size = New System.Drawing.Size(14, 20)
+        Me.btnClear.TabIndex = 14
+        Me.btnClear.Text = "x"
+        Me.ToolTip1.SetToolTip(Me.btnClear, "minden adat törlése")
+        Me.btnClear.UseVisualStyleBackColor = True
+        '
         'EntryForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1364, 41)
+        Me.Controls.Add(Me.btnClear)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.Label1)
@@ -225,4 +256,7 @@ Partial Class EntryForm
     Friend WithEvents Label2 As Label
     Friend WithEvents tbDescription As TextBox
     Friend WithEvents Label3 As Label
+    Friend WithEvents TimerForRefresh As Timer
+    Friend WithEvents btnClear As Button
+    Friend WithEvents ToolTip1 As ToolTip
 End Class

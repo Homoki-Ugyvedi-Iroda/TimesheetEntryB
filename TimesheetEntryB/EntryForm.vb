@@ -9,7 +9,6 @@ Public Class EntryForm
     Public Property Tasks As List(Of TaskClass)
     Public Property TimesheetEntries As List(Of TimesheetEntry)
     Public Shared Logger As New HPHelper.DebugTesting(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name & ".log")
-
     Public Sub New()
 
         ' This call is required by the designer.
@@ -26,22 +25,18 @@ Public Class EntryForm
         End If
         ' Add any initialization after the InitializeComponent() call.
         LoadSpLookupValues()
+        TimerForRefresh.Start()
     End Sub
-    Public Async Sub LoadSpLookupValues()
+    Public Sub LoadSpLookupValues()
         'deserialize-oltokat betölti, és beállítja az async-ot
         'Matter értékek: Id, Value, Active
         'Person értékek: adott matterhöz tartozó personok = Id, Value, Active, Matter
         'Users értékek: Id, loginname
-        Dim m As New DataLayer()
-        Me.Users = Await m.GetAllUsers(Me.Connection.Context)
-        Me.Matters = Await m.GetAllMattersAsync(Me.Connection.Context)
-        Me.Persons = Await m.GetAllPersonsAsync(Me.Connection.Context)
-        Me.Tasks = Await m.GetAllTasksAsync(Me.Connection.Context)
-        Me.TimesheetEntries = Await m.GetAllTsheetAsync(Me.Connection.Context)
-        Message.Text = "kapcsolódott SP-hoz"
-        DateCompleted.Value = Today
 
-        FillandFindUser
+        Message.Text = "kapcsolódott SP-hoz"
+        RefreshSpLookupValues()
+        DateCompleted.Value = Today
+        FillAndFindUser()
 
         Dim MatterSource As New BindingList(Of MatterClass)
         For Each item In Me.Matters
@@ -54,16 +49,26 @@ Public Class EntryForm
         UpdateValues()
         'Task!
     End Sub
+    Public Async Sub RefreshSpLookupValues()
+        Dim m As New DataLayer()
+        Me.Users = Await m.GetAllUsers(Me.Connection.Context)
+        Me.Matters = Await m.GetAllMattersAsync(Me.Connection.Context)
+        Me.Persons = Await m.GetAllPersonsAsync(Me.Connection.Context)
+        Me.Tasks = Await m.GetAllTasksAsync(Me.Connection.Context)
+        Me.TimesheetEntries = Await m.GetAllTsheetAsync(Me.Connection.Context)
+    End Sub
     Private Sub UpdateValues()
         Dim PersonSource As New BindingList(Of PersonClass)
         For Each person As PersonClass In Me.Persons
-            For Each matter As MatterClass In person.Matter
-                If IsNothing(cbMatterPicker.SelectedItem) Then
-                    PersonSource.Add(person)
-                Else
-                    If matter.Equals(cbMatterPicker.SelectedItem) Then PersonSource.Add(person)
-                End If
-            Next
+            PersonSource.Add(person)
+            '#Ha le kell szűkíteni csak az adott Matter partnereire, akkor az alábbival tehetjük meg, de egyelőre nem fontos
+            'For Each matter As MatterClass In person.Matter
+            'If IsNothing(cbMatterPicker.SelectedItem) Then
+            '    PersonSource.Add(person)
+            'Else
+            '    If matter.Equals(cbMatterPicker.SelectedItem) Then PersonSource.Add(person)
+            'End If
+            'Next
         Next
         cbPersons.DataSource = PersonSource
         cbPersons.DisplayMember = "Value"
@@ -115,14 +120,9 @@ Public Class EntryForm
         AllPreviousDescriptions.Add("szerződéstervezet készítése")
         AllPreviousDescriptions.Add("szerződéstervezet véleményezése")
         AllPreviousDescriptions.Add("kiszervezési")
-        'Hozzáadni TaskType-okat SP-ből?
         tbDescription.AutoCompleteSource = AutoCompleteSource.CustomSource
         tbDescription.AutoCompleteCustomSource = AllPreviousDescriptions
         tbDescription.AutoCompleteMode = AutoCompleteMode.SuggestAppend
-        'cbDescription.AutoCompleteSource = AutoCompleteSource.CustomSource
-        'cbDescription.AutoCompleteCustomSource = AllPreviousDescriptions
-        'cbDescription.AutoCompleteMode = AutoCompleteMode.SuggestAppend
-
 
     End Sub
 
@@ -163,12 +163,18 @@ Public Class EntryForm
         Dim NewEntry = TimesheetEntryFromGUI()
         Dim mySpHui As New TimesheetEntry
         mySpHui.SaveNewEntryInSp(Me.Connection.Context, NewEntry)
-        tbDescription.Text = String.Empty
-        cbMatterPicker.SelectedItem = Nothing
+        EntryFormDeleteFields
         Label1.Text = "rögzítve az SP-ben: " & NewEntry.Description & ", " & cbPersons.Text
         'Törölni meglévő értéket és jelezni, hogy rögzítette!
     End Sub
-
+    Private Sub EntryFormDeleteFields()
+        tbDescription.Text = String.Empty
+        cbMatterPicker.SelectedItem = Nothing
+        tbReviewer.Text = String.Empty
+        cbPersons.Text = String.Empty
+        RealValue.Value = String.Empty
+        Chargeable.Value = String.Empty
+    End Sub
     Private Function TimesheetEntryFromGUI() As TimesheetEntry
         Dim NewEntry As New TimesheetEntry
         NewEntry.Reviewer = tbReviewer.Text
@@ -183,14 +189,15 @@ Public Class EntryForm
         Return NewEntry
     End Function
 
-
     Private Sub cbMatterPicker_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles cbMatterPicker.SelectionChangeCommitted
         UpdateValues()
     End Sub
 
     Private Sub tbReviewer_Validated(sender As Object, e As EventArgs) Handles tbReviewer.Validated
-        If tbReviewer.Text.First = " " Then Exit Sub
-        Dim PartedText As String() = tbReviewer.Text.Split(" ")
+        Dim input = tbReviewer.Text
+        If String.IsNullOrWhiteSpace(input) Or input.StartsWith(" ") Then Exit Sub
+        Dim PartedText As String() = input.Split(" ")
+        If PartedText.Count < 2 Then Exit Sub
         Dim javitott As New List(Of String)
         For Each _text In PartedText
             javitott.Add(_text.Substring(0, 1).ToUpper & _text.Substring(1, _text.Length - 1))
@@ -206,5 +213,13 @@ Public Class EntryForm
             Chargeable.ForeColor = System.Drawing.SystemColors.ControlText
             Chargeable.BackColor = System.Drawing.SystemColors.Window
         End If
+    End Sub
+
+    Private Sub TimerForRefresh_Tick(sender As Object, e As EventArgs) Handles TimerForRefresh.Tick
+        RefreshSpLookupValues()
+    End Sub
+
+    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+        EntryFormDeleteFields()
     End Sub
 End Class
