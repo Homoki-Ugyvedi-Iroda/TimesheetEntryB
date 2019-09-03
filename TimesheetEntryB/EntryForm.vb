@@ -183,8 +183,8 @@ Public Class EntryForm
         cbMatterPicker.SelectedItem = Nothing
         tbReviewer.Text = String.Empty
         cbPersons.Text = String.Empty
-        RealValue.Value = String.Empty
-        Chargeable.Value = String.Empty
+        RealValue.Value = 0
+        Chargeable.Value = 0
     End Sub
     Private Function TimesheetEntryFromGUI() As TimesheetEntry
         Dim NewEntry As New TimesheetEntry
