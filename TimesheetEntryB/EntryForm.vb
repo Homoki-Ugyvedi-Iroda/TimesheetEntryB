@@ -27,14 +27,14 @@ Public Class EntryForm
         LoadSpLookupValues()
         TimerForRefresh.Start()
     End Sub
-    Public Sub LoadSpLookupValues()
+    Public Async Sub LoadSpLookupValues()
         'deserialize-oltokat betölti, és beállítja az async-ot
         'Matter értékek: Id, Value, Active
         'Person értékek: adott matterhöz tartozó personok = Id, Value, Active, Matter
         'Users értékek: Id, loginname
 
         Message.Text = "kapcsolódott SP-hoz"
-        RefreshSpLookupValues()
+        Await RefreshSpLookupValues()
         DateCompleted.Value = Today
         FillAndFindUser()
 
@@ -49,14 +49,14 @@ Public Class EntryForm
         UpdateValues()
         'Task!
     End Sub
-    Public Async Sub RefreshSpLookupValues()
+    Public Async Function RefreshSpLookupValues() As Task
         Dim m As New DataLayer()
         Me.Users = Await m.GetAllUsers(Me.Connection.Context)
         Me.Matters = Await m.GetAllMattersAsync(Me.Connection.Context)
         Me.Persons = Await m.GetAllPersonsAsync(Me.Connection.Context)
         Me.Tasks = Await m.GetAllTasksAsync(Me.Connection.Context)
         Me.TimesheetEntries = Await m.GetAllTsheetAsync(Me.Connection.Context)
-    End Sub
+    End Function
     Private Sub UpdateValues()
         Dim PersonSource As New BindingList(Of PersonClass)
         For Each person As PersonClass In Me.Persons
