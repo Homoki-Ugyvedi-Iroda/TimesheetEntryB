@@ -112,6 +112,7 @@ Partial Class EntryForm
         '
         Me.tbReviewer.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend
         Me.tbReviewer.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource
+
         Me.tbReviewer.Location = New System.Drawing.Point(291, 1)
         Me.tbReviewer.Name = "tbReviewer"
         Me.tbReviewer.Size = New System.Drawing.Size(134, 20)

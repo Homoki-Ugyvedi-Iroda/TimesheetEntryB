@@ -91,40 +91,50 @@ Public Class EntryForm
         SetAutoComplete()
     End Sub
     Private Sub SetAutoComplete()
-        Dim AllPreviousReviewersInTs As New AutoCompleteStringCollection
-        For Each entry As TimesheetEntry In Me.TimesheetEntries
-            If IsNothing(cbMatterPicker.SelectedItem) Then
-                AllPreviousReviewersInTs.Add(entry.Reviewer)
-            Else
-                If Not IsNothing(entry.Matter) AndAlso entry.Matter.Equals(cbMatterPicker.SelectedItem) Then _
-                    AllPreviousReviewersInTs.Add(entry.Reviewer)
-            End If
-        Next
-        For Each entry As TaskClass In Me.Tasks
-            If IsNothing(cbMatterPicker.SelectedItem) Then
-                If Not IsNothing(entry.Reviewer) Then AllPreviousReviewersInTs.Add(entry.Reviewer)
-            Else
-                If Not IsNothing(entry.Matter) AndAlso entry.Matter.Equals(cbMatterPicker.SelectedItem) Then _
-                    AllPreviousReviewersInTs.Add(entry.Reviewer)
-            End If
-        Next
-        tbReviewer.AutoCompleteCustomSource = AllPreviousReviewersInTs
+        Try
+            Dim AllPreviousReviewersInTs As New AutoCompleteStringCollection
+            tbReviewer.AutoCompleteCustomSource.Clear()
 
-        Dim AllPreviousDescriptions As New AutoCompleteStringCollection
-        For Each entry As TimesheetEntry In Me.TimesheetEntries
-            If IsNothing(cbMatterPicker.SelectedItem) Then
-                AllPreviousDescriptions.Add(entry.Description)
-            Else
-                If Not IsNothing(entry.Matter) AndAlso entry.Matter.Equals(cbMatterPicker.SelectedItem) Then AllPreviousDescriptions.Add(entry.Description)
-            End If
-        Next
-        AllPreviousDescriptions.Add("szerződéstervezet készítése")
-        AllPreviousDescriptions.Add("szerződéstervezet véleményezése")
-        AllPreviousDescriptions.Add("kiszervezési")
-        tbDescription.AutoCompleteSource = AutoCompleteSource.CustomSource
-        tbDescription.AutoCompleteCustomSource = AllPreviousDescriptions
-        tbDescription.AutoCompleteMode = AutoCompleteMode.SuggestAppend
+            For Each entry As TimesheetEntry In Me.TimesheetEntries
+                If String.IsNullOrEmpty(entry.Reviewer) Then Continue For
+                If IsNothing(cbMatterPicker.SelectedItem) Then
+                    If Not AllPreviousReviewersInTs.Contains(entry.Reviewer) Then AllPreviousReviewersInTs.Add(entry.Reviewer)
+                Else
+                    If Not IsNothing(entry.Matter) AndAlso Not AllPreviousReviewersInTs.Contains(entry.Reviewer) AndAlso entry.Matter.Equals(cbMatterPicker.SelectedItem) Then _
+                    AllPreviousReviewersInTs.Add(entry.Reviewer)
+                End If
+            Next
+            For Each entry As TaskClass In Me.Tasks
+                If String.IsNullOrEmpty(entry.Reviewer) Then Continue For
+                If IsNothing(cbMatterPicker.SelectedItem) Then
+                    If Not AllPreviousReviewersInTs.Contains(entry.Reviewer) Then AllPreviousReviewersInTs.Add(entry.Reviewer)
+                Else
+                    If Not IsNothing(entry.Matter) AndAlso Not AllPreviousReviewersInTs.Contains(entry.Reviewer) AndAlso entry.Matter.Equals(cbMatterPicker.SelectedItem) Then _
+                    AllPreviousReviewersInTs.Add(entry.Reviewer)
+                End If
+            Next
+            tbReviewer.AutoCompleteCustomSource = AllPreviousReviewersInTs
 
+            Dim AllPreviousDescriptions As New AutoCompleteStringCollection
+            tbDescription.AutoCompleteCustomSource.Clear()
+
+
+            For Each entry As TimesheetEntry In Me.TimesheetEntries
+                If String.IsNullOrEmpty(entry.Description) Then Continue For
+                If IsNothing(cbMatterPicker.SelectedItem) AndAlso Not AllPreviousDescriptions.Contains(entry.Description) Then
+                    AllPreviousDescriptions.Add(entry.Description)
+                Else
+                    If Not IsNothing(entry.Matter) AndAlso entry.Matter.Equals(cbMatterPicker.SelectedItem) AndAlso Not AllPreviousDescriptions.Contains(entry.Description) Then AllPreviousDescriptions.Add(entry.Description)
+                End If
+            Next
+            AllPreviousDescriptions.Add("szerződéstervezet készítése")
+            AllPreviousDescriptions.Add("szerződéstervezet véleményezése")
+            AllPreviousDescriptions.Add("kiszervezési")
+            tbDescription.AutoCompleteCustomSource = AllPreviousDescriptions
+
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
     End Sub
 
     Private Sub FillAndFindUser()
@@ -195,15 +205,7 @@ Public Class EntryForm
     End Sub
 
     Private Sub tbReviewer_Validated(sender As Object, e As EventArgs) Handles tbReviewer.Validated
-        Dim input = tbReviewer.Text
-        If String.IsNullOrWhiteSpace(input) Or input.StartsWith(" ") Then Exit Sub
-        Dim PartedText As String() = input.Split(" ")
-        If PartedText.Count < 2 Then Exit Sub
-        Dim javitott As New List(Of String)
-        For Each _text In PartedText
-            javitott.Add(_text.Substring(0, 1).ToUpper & _text.Substring(1, _text.Length - 1))
-        Next
-        Dim javitottEgybe = String.Join(" ", javitott)
+        tbReviewer.Text = Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(tbReviewer.Text)
     End Sub
 
     Private Sub Chargeable_Doubleclick(sender As Object, e As EventArgs) Handles Chargeable.DoubleClick
@@ -227,4 +229,5 @@ Public Class EntryForm
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles btnSpTs.Click
         Process.Start(SpTimesheetNotInvoicedView)
     End Sub
+
 End Class
