@@ -222,7 +222,8 @@ Partial Class EntryForm
         Me.btnSpTs.Size = New System.Drawing.Size(23, 20)
         Me.btnSpTs.TabIndex = 15
         Me.btnSpTs.Text = "SP"
-        Me.ToolTip1.SetToolTip(Me.btnSpTs, "minden adat törlése")
+        Me.ToolTip1.SetToolTip(Me.btnSpTs, "Módosítás végett nyissa meg a Sharepointban a Timesheet listát (csak a nem számlá" &
+        "zottakat)")
         Me.btnSpTs.UseVisualStyleBackColor = True
         '
         'EntryForm
