@@ -9,6 +9,7 @@ Public Class EntryForm
     Public Property Tasks As List(Of TaskClass)
     Public Property TimesheetEntries As List(Of TimesheetEntry)
     Public Shared Logger As New HPHelper.DebugTesting(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name & ".log")
+    Private Const SpTimesheetNotInvoicedView = "https://homoki.sharepoint.com/Lists/Time%20Entry/AllItems.aspx?viewid=e1638d1e%2Df79d%2D4a65%2Da394%2D95a32243b7e6"
     Public Sub New()
 
         ' This call is required by the designer.
@@ -221,5 +222,9 @@ Public Class EntryForm
 
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
         EntryFormDeleteFields()
+    End Sub
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles btnSpTs.Click
+        Process.Start(SpTimesheetNotInvoicedView)
     End Sub
 End Class

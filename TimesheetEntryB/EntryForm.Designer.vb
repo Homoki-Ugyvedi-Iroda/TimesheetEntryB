@@ -40,6 +40,7 @@ Partial Class EntryForm
         Me.TimerForRefresh = New System.Windows.Forms.Timer(Me.components)
         Me.btnClear = New System.Windows.Forms.Button()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.btnSpTs = New System.Windows.Forms.Button()
         CType(Me.Chargeable, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.RealValue, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -212,11 +213,24 @@ Partial Class EntryForm
         Me.ToolTip1.SetToolTip(Me.btnClear, "minden adat törlése")
         Me.btnClear.UseVisualStyleBackColor = True
         '
+        'btnSpTs
+        '
+        Me.btnSpTs.Font = New System.Drawing.Font("Microsoft Sans Serif", 6.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
+        Me.btnSpTs.Location = New System.Drawing.Point(1327, 23)
+        Me.btnSpTs.Margin = New System.Windows.Forms.Padding(1)
+        Me.btnSpTs.Name = "btnSpTs"
+        Me.btnSpTs.Size = New System.Drawing.Size(23, 20)
+        Me.btnSpTs.TabIndex = 15
+        Me.btnSpTs.Text = "SP"
+        Me.ToolTip1.SetToolTip(Me.btnSpTs, "minden adat törlése")
+        Me.btnSpTs.UseVisualStyleBackColor = True
+        '
         'EntryForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1364, 41)
+        Me.Controls.Add(Me.btnSpTs)
         Me.Controls.Add(Me.btnClear)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.Label2)
@@ -259,4 +273,5 @@ Partial Class EntryForm
     Friend WithEvents TimerForRefresh As Timer
     Friend WithEvents btnClear As Button
     Friend WithEvents ToolTip1 As ToolTip
+    Friend WithEvents btnSpTs As Button
 End Class
