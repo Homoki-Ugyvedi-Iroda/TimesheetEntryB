@@ -39,6 +39,7 @@ Public Class EntryForm
         DateCompleted.Value = Today
         FillAndFindUser()
 
+        'Esetleg az alábbi Matterrel kapcsolatos részt külön Sub-ba?
         Dim MatterSource As New BindingList(Of MatterClass)
         For Each item In Me.Matters
             If item.Active = True Then MatterSource.Add(item)
@@ -172,6 +173,7 @@ Public Class EntryForm
     Private Sub EntryFormDeleteFields()
         tbDescription.Text = String.Empty
         cbMatterPicker.SelectedItem = Nothing
+        cbTaskChooser.SelectedItem = Nothing
         tbReviewer.Text = String.Empty
         cbPersons.Text = String.Empty
         RealValue.Value = 0.25
