@@ -28,7 +28,7 @@
     <UpdateUrl>\\huidc\hui_it_admin\forinstall\HPOwn\TimesheetEntryB\</UpdateUrl>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>9</ApplicationRevision>
+    <ApplicationRevision>10</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -202,16 +202,6 @@
     <EmbeddedResource Include="Resources\tsheet.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\OptenUploaderConsole\HPHelper\HPHelper.vbproj">
-      <Project>{1102812c-2923-4a94-a27b-d42ad3ebb65e}</Project>
-      <Name>HPHelper</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\OptenUploaderConsole\SPHelper\SPHelper.vbproj">
-      <Project>{7a8528f7-ed86-4c73-b384-9ecd5afb1bdb}</Project>
-      <Name>SPHelper</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
@@ -222,6 +212,16 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\OptenUploaderConsole2\HPHelper\HPHelper.vbproj">
+      <Project>{1102812c-2923-4a94-a27b-d42ad3ebb65e}</Project>
+      <Name>HPHelper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\OptenUploaderConsole2\SPHelper\SPHelper.vbproj">
+      <Project>{7a8528f7-ed86-4c73-b384-9ecd5afb1bdb}</Project>
+      <Name>SPHelper</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>
