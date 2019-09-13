@@ -108,7 +108,7 @@ Public Class EntryForm
             If IsNothing(cbMatterPicker.SelectedItem) Then
                 If Not AllPreviousReviewersInTs.Contains(entry.Reviewer) Then AllPreviousReviewersInTs.Add(entry.Reviewer)
             Else
-                If Not IsNothing(entry.Matter) AndAlso Not AllPreviousReviewersInTs.Contains(entry.Reviewer) AndAlso entry.Matter.Equals(cbMatterPicker.SelectedItem) Then _
+                If Not IsNothing(entry.Matter) AndAlso Not AllPreviousReviewersInTs.Contains(entry.Reviewer) AndAlso entry.Matter.ID = cbMatterPicker.SelectedItem.ID Then _
                     AllPreviousReviewersInTs.Add(entry.Reviewer)
             End If
         Next
@@ -118,9 +118,13 @@ Public Class EntryForm
         For Each entry As TimesheetEntry In Me.TimesheetEntries
             If String.IsNullOrEmpty(entry.Description) Then Continue For
             If IsNothing(cbMatterPicker.SelectedItem) AndAlso Not AllPreviousDescriptions.Contains(entry.Description) Then
-                AllPreviousDescriptions.Add(entry.Description)
+                Dim KettosPontUtaniResz As String = entry.Description
+                If entry.Description.Contains(":") Then
+                    KettosPontUtaniResz = KettosPontUtaniResz.Substring(InStr(entry.Description, ":")).Trim
+                End If
+                AllPreviousDescriptions.Add(KettosPontUtaniResz)
             Else
-                If Not IsNothing(entry.Matter) AndAlso entry.Matter.Equals(cbMatterPicker.SelectedItem) AndAlso Not AllPreviousDescriptions.Contains(entry.Description) Then AllPreviousDescriptions.Add(entry.Description)
+                If Not IsNothing(entry.Matter) AndAlso entry.Matter.ID = cbMatterPicker.SelectedItem.ID AndAlso Not AllPreviousDescriptions.Contains(entry.Description) Then AllPreviousDescriptions.Add(entry.Description)
             End If
         Next
         AllPreviousDescriptions.Add("szerződéstervezet készítése")
