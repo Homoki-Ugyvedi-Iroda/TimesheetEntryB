@@ -53,7 +53,7 @@ Public Class EntryForm
     End Sub
     Public Async Function RefreshSpLookupValues() As Task
         Logger.WriteInfo("RefreshSpLookupValues")
-        Logger.WriteInfo("Taskcount before: " & Me.Tasks.Count)
+        If Not IsNothing(Me.Tasks) Then Logger.WriteInfo("Taskcount before: " & Me.Tasks.Count)
         Dim m As New DataLayer()
         Me.Users = Await m.GetAllUsers(Me.Connection.Context)
         Me.Matters = Await m.GetAllMattersAsync(Me.Connection.Context)
