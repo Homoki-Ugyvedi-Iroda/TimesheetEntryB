@@ -33,7 +33,7 @@ Public Class EntryForm
         'Matter értékek: Id, Value, Active
         'Person értékek: adott matterhöz tartozó personok = Id, Value, Active, Matter
         'Users értékek: Id, loginname
-
+        Logger.WriteInfo("Public Async Sub LoadSpLookupValues")
         Message.Text = "kapcsolódott SP-hoz"
         Await RefreshSpLookupValues()
         DateCompleted.Value = Today
@@ -52,6 +52,8 @@ Public Class EntryForm
         'Task!
     End Sub
     Public Async Function RefreshSpLookupValues() As Task
+        Logger.WriteInfo("RefreshSpLookupValues")
+        Logger.WriteInfo("Taskcount before: " & Me.Tasks.Count)
         Dim m As New DataLayer()
         Me.Users = Await m.GetAllUsers(Me.Connection.Context)
         Me.Matters = Await m.GetAllMattersAsync(Me.Connection.Context)
@@ -60,6 +62,8 @@ Public Class EntryForm
         Me.TimesheetEntries = Await m.GetAllTsheetAsync(Me.Connection.Context)
     End Function
     Private Sub UpdateValues()
+        Logger.WriteInfo("UpdateValues")
+
         Dim PersonSource As New BindingList(Of PersonClass)
         For Each person As PersonClass In Me.Persons
             PersonSource.Add(person)
@@ -75,6 +79,7 @@ Public Class EntryForm
         cbPersons.DataSource = PersonSource
         cbPersons.DisplayMember = "Value"
         cbPersons.SelectedItem = Nothing
+        Logger.WriteInfo("cbPersonSource numbers: " & Me.cbPersons.Items.Count)
 
         Dim TaskSource As New BindingList(Of TaskClass)
         For Each task As TaskClass In Me.Tasks
@@ -89,9 +94,13 @@ Public Class EntryForm
         cbTaskChooser.DataSource = TaskSource
         cbTaskChooser.DisplayMember = "TitleOrTaskName"
         cbTaskChooser.SelectedItem = Nothing
+        Logger.WriteInfo("cbTask numbers: " & Me.cbTaskChooser.Items.Count)
+
         SetAutoComplete()
     End Sub
     Private Sub SetAutoComplete()
+        Logger.WriteInfo("SetAutoComplete")
+
         Dim AllPreviousReviewersInTs As New AutoCompleteStringCollection
         tbReviewer.AutoCompleteCustomSource.Clear()
         For Each entry As TimesheetEntry In Me.TimesheetEntries
@@ -103,6 +112,8 @@ Public Class EntryForm
                     AllPreviousReviewersInTs.Add(entry.Reviewer)
             End If
         Next
+        Logger.WriteInfo("SetAutoComplete_tbReviewer:" & AllPreviousReviewersInTs.Count)
+
         For Each entry As TaskClass In Me.Tasks
             If String.IsNullOrEmpty(entry.Reviewer) Then Continue For
             If IsNothing(cbMatterPicker.SelectedItem) Then
@@ -113,6 +124,7 @@ Public Class EntryForm
             End If
         Next
         tbReviewer.AutoCompleteCustomSource = AllPreviousReviewersInTs
+
         Dim AllPreviousDescriptions As New AutoCompleteStringCollection
         tbDescription.AutoCompleteCustomSource.Clear()
         For Each entry As TimesheetEntry In Me.TimesheetEntries
