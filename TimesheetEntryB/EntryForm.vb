@@ -79,51 +79,80 @@ Public Class EntryForm
         cbPersons.DataSource = PersonSource
         cbPersons.DisplayMember = "Value"
         cbPersons.SelectedItem = Nothing
-        Logger.WriteInfo("cbPersonSource numbers: " & Me.cbPersons.Items.Count)
 
         Dim TaskSource As New BindingList(Of TaskClass)
+        Logger.WriteInfo("Me.Task numbers: " & IIf(Not IsNothing(Me.Tasks), Me.Tasks.Count, "0"))
+
         For Each task As TaskClass In Me.Tasks
-            If IsNothing(cbMatterPicker.SelectedItem) Then
-                TaskSource.Add(task)
-                Continue For
+            If Not IsNothing(cbMatterPicker) AndAlso Not IsNothing(cbMatterPicker.SelectedItem) Then
+                If Not IsNothing(cbMatterPicker.SelectedItem.ShortTextID) AndAlso Not IsNothing(cbMatterPicker.SelectedItem.Value) Then
+                    Logger.WriteInfo("Selected Matter: " & cbMatterPicker.SelectedItem.ShortTextID & "_" & cbMatterPicker.SelectedItem.Value)
+                Else
+                    Logger.WriteInfo("Selected Matter: nothing")
+                End If
             End If
-            If Not IsNothing(task.Matter) AndAlso task.Matter.Equals(cbMatterPicker.SelectedItem) Then
+            If IsNothing(cbMatterPicker.SelectedItem) OrElse IsNothing(task.Matter) Then
                 TaskSource.Add(task)
+                Logger.WriteInfo("task added by If IsNothing(cbMatterPicker.SelectedItem) OrElse IsNothing(task.Matter): " & task.ID)
+            ElseIf task.Matter.Equals(cbMatterPicker.SelectedItem) Then
+                TaskSource.Add(task)
+                Logger.WriteInfo("task added by ElseIf: " & task.ID)
             End If
         Next
         cbTaskChooser.DataSource = TaskSource
         cbTaskChooser.DisplayMember = "TitleOrTaskName"
         cbTaskChooser.SelectedItem = Nothing
         Logger.WriteInfo("cbTask numbers: " & Me.cbTaskChooser.Items.Count)
-
         SetAutoComplete()
     End Sub
     Private Sub SetAutoComplete()
         Logger.WriteInfo("SetAutoComplete")
-
         Dim AllPreviousReviewersInTs As New AutoCompleteStringCollection
         tbReviewer.AutoCompleteCustomSource.Clear()
         For Each entry As TimesheetEntry In Me.TimesheetEntries
-            If String.IsNullOrEmpty(entry.Reviewer) Then Continue For
-            If IsNothing(cbMatterPicker.SelectedItem) Then
-                If Not AllPreviousReviewersInTs.Contains(entry.Reviewer) Then AllPreviousReviewersInTs.Add(entry.Reviewer)
+            If Not IsNothing(Me.TimesheetEntries) Then
+                Logger.WriteInfo("Me.Timesheetentries.Count: " & Me.TimesheetEntries.Count)
             Else
-                If Not IsNothing(entry.Matter) AndAlso Not AllPreviousReviewersInTs.Contains(entry.Reviewer) AndAlso entry.Matter.Equals(cbMatterPicker.SelectedItem) Then _
-                    AllPreviousReviewersInTs.Add(entry.Reviewer)
+                Logger.WriteInfo("Me.Timesheetentries.Count: 0")
+            End If
+
+            If String.IsNullOrEmpty(entry.Reviewer) OrElse AllPreviousReviewersInTs.Contains(entry.Reviewer) Then
+                Logger.WriteInfo("tbReviewer is already in AllPreviousReviewersInTs: " & entry.Reviewer)
+                Continue For
+            End If
+            Logger.WriteInfo("new tbReviewer found: " & entry.Reviewer)
+            If IsNothing(cbMatterPicker.SelectedItem) Then
+                Logger.WriteInfo("tbReviewer Add start for non-matter")
+                If Not AllPreviousReviewersInTs.Contains(entry.Reviewer) Then AllPreviousReviewersInTs.Add(entry.Reviewer)
+                Logger.WriteInfo("tbReviewer Added: " & entry.Reviewer)
+            ElseIf Not IsNothing(entry.Matter) AndAlso entry.Matter.Equals(cbMatterPicker.SelectedItem) Then
+                Logger.WriteInfo("tbReviewer Add start for matter: " & cbMatterPicker.SelectedItem.ID)
+                AllPreviousReviewersInTs.Add(entry.Reviewer)
+                Logger.WriteInfo("tbReviewer Added for matter: " & entry.Reviewer & "_" & entry.Matter.ID)
             End If
         Next
         Logger.WriteInfo("SetAutoComplete_tbReviewer:" & AllPreviousReviewersInTs.Count)
 
         For Each entry As TaskClass In Me.Tasks
-            If String.IsNullOrEmpty(entry.Reviewer) Then Continue For
-            If IsNothing(cbMatterPicker.SelectedItem) Then
-                If Not AllPreviousReviewersInTs.Contains(entry.Reviewer) Then AllPreviousReviewersInTs.Add(entry.Reviewer)
+            If Not IsNothing(Me.Tasks) Then
+                Logger.WriteInfo("tbReviewer entry FROM TASK : " & Me.Tasks.Count)
             Else
-                If Not IsNothing(entry.Matter) AndAlso Not AllPreviousReviewersInTs.Contains(entry.Reviewer) AndAlso entry.Matter.ID = cbMatterPicker.SelectedItem.ID Then _
-                    AllPreviousReviewersInTs.Add(entry.Reviewer)
+                Logger.WriteInfo("tbReviewer entry FROM TASK : 0")
+            End If
+
+            If String.IsNullOrWhiteSpace(entry.Reviewer) OrElse AllPreviousReviewersInTs.Contains(entry.Reviewer) Then Continue For
+            If IsNothing(cbMatterPicker.SelectedItem) Then
+                Logger.WriteInfo("tbReviewer Add FROM TASK start for non-matter")
+                AllPreviousReviewersInTs.Add(entry.Reviewer)
+                Logger.WriteInfo("tbReviewer FROM TASK Added: " & entry.Reviewer)
+            ElseIf Not IsNothing(entry.Matter) AndAlso entry.Matter.Equals(cbMatterPicker.SelectedItem) Then
+                Logger.WriteInfo("tbReviewer Add FROM TASK start for matter: " & cbMatterPicker.SelectedItem.ID)
+                AllPreviousReviewersInTs.Add(entry.Reviewer)
+                Logger.WriteInfo("tbReviewer Add FROM TASK end: " & entry.Reviewer & "_" & entry.Matter.ID)
             End If
         Next
         tbReviewer.AutoCompleteCustomSource = AllPreviousReviewersInTs
+        Logger.WriteInfo("SetAutoComplete_tbReviewer FROM TASK:" & AllPreviousReviewersInTs.Count)
 
         Dim AllPreviousDescriptions As New AutoCompleteStringCollection
         tbDescription.AutoCompleteCustomSource.Clear()
@@ -136,7 +165,10 @@ Public Class EntryForm
                 End If
                 AllPreviousDescriptions.Add(KettosPontUtaniResz)
             Else
-                If Not IsNothing(entry.Matter) AndAlso entry.Matter.ID = cbMatterPicker.SelectedItem.ID AndAlso Not AllPreviousDescriptions.Contains(entry.Description) Then AllPreviousDescriptions.Add(entry.Description)
+                If Not IsNothing(entry.Matter) AndAlso entry.Matter.Equals(cbMatterPicker.SelectedItem) AndAlso Not AllPreviousDescriptions.Contains(entry.Description) Then
+                    AllPreviousDescriptions.Add(entry.Description)
+                    Logger.WriteInfo("tbDescription Add end: " & entry.Reviewer & "_" & entry.Matter.ID)
+                End If
             End If
         Next
         AllPreviousDescriptions.Add("szerződéstervezet készítése")
@@ -229,6 +261,7 @@ Public Class EntryForm
 
     Private Sub TimerForRefresh_Tick(sender As Object, e As EventArgs) Handles TimerForRefresh.Tick
         RefreshSpLookupValues()
+        UpdateValues()
     End Sub
 
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
