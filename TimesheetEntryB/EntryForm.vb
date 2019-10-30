@@ -162,7 +162,7 @@ Public Class EntryForm
                 End If
                 AllPreviousDescriptions.Add(KettosPontUtaniResz)
             Else
-                If Not IsNothing(entry.Matter) AndAlso entry.Matter.ID = cbMatterPicker.SelectedItem.ID AndAlso Not AllPreviousDescriptions.Contains(entry.Description) Then
+                If Not IsNothing(entry.Matter) AndAlso Not IsNothing(cbMatterPicker.SelectedItem) AndAlso entry.Matter.ID = cbMatterPicker.SelectedItem.ID AndAlso Not AllPreviousDescriptions.Contains(entry.Description) Then
                     AllPreviousDescriptions.Add(entry.Description)
                     'Logger.WriteInfo("tbDescription Add end: " & entry.Reviewer & "_" & entry.Matter.ID)
                 End If
