@@ -4,4 +4,6 @@ A basic MS Forms-based timesheet entry app from 2019 that we are still using, re
 
 This is using a preconfigured Sharepoint site list as the source for matters, reviewers and timekeepers, and also as target for new time entries.
 
+The Sharepoint site address is in "Settings.settings".
+
 This repository is for archival purposes only.
