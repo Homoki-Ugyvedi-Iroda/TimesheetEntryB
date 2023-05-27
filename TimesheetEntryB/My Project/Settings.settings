@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="SpUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">https://homoki.sharepoint.com</Value>
+      <Value Profile="(Default)">https://[...].sharepoint.com</Value>
     </Setting>
     <Setting Name="EmailCurrentUser" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
